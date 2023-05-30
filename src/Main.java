@@ -1,6 +1,14 @@
-public class Main {
-
-  public static void main(String[] args) {
-    System.out.println("Hello world!");
-  }
-}
+//import java.io.IOException;
+//
+//public class Main {
+//
+//  public static void main(String[] args) throws IOException {
+//    Server server = new Server();
+//    server.initServer();
+//    server.listenMessage();
+//
+//    Client client = new Client();
+//    client.initClient();
+//
+//  }
+//}
