@@ -38,22 +38,22 @@ public class Client {
   }
 
   public void closeResources() throws IOException {
-    System.out.println("Closing client resources");
-    if (bufferedOutputStream != null) {
-      System.out.println("Closing bufferedOutputStream");
-      bufferedOutputStream.close();
-    }
+    System.out.println("Closing client resources:");
     if (socket != null) {
       System.out.println("Closing socket");
       socket.close();
     }
-    if (bufferedInputStream != null) {
-      System.out.println("Closing bufferedInputStream");
-      bufferedInputStream.close();
-    }
     if (scanner != null) {
       System.out.println("Closing scanner");
       scanner.close();
+    }
+    if (bufferedOutputStream != null) {
+      System.out.println("Closing bufferedOutputStream");
+      bufferedOutputStream.close();
+    }
+    if (bufferedInputStream != null) {
+      System.out.println("Closing bufferedInputStream");
+      bufferedInputStream.close();
     }
   }
 

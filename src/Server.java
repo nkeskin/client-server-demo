@@ -40,7 +40,7 @@ public class Server {
   }
 
   public void closeResources() throws IOException {
-    System.out.println("Closing server resources");
+    System.out.println("Closing server resources:");
     if (socket != null) {
       System.out.println("Closing socket");
       socket.close();
