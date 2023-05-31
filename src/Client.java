@@ -8,7 +8,7 @@ public class Client {
 
   private Socket socket;
   private BufferedOutputStream bufferedOutputStream;
-  BufferedInputStream bufferedInputStream;
+  private BufferedInputStream bufferedInputStream;
   private final Scanner scanner;
   private final String host;
   private final int port;
