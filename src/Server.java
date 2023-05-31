@@ -1,5 +1,6 @@
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
@@ -8,26 +9,54 @@ public class Server {
 
   private ServerSocket serverSocket;
   private Socket socket;
-  private InputStream inputStream;
+  private BufferedInputStream bufferedInputStream;
+  private BufferedOutputStream bufferedOutputStream;
+  private final int port;
 
-  public static void main(String[] args) throws IOException {
-    Server server = new Server();
-    server.initServer();
-    server.listenMessage();
+  public Server(int port) throws IOException {
+    this.port = port;
+    initServer();
+    System.out.println("Server initialized, listening for incoming messages.");
   }
 
-  public void initServer() throws IOException {
-    serverSocket = new ServerSocket(12345);
+  private void initServer() throws IOException {
+    serverSocket = new ServerSocket(port);
   }
 
-  public void listenMessage() throws IOException {
+  public void listenConversation() throws IOException {
     socket = serverSocket.accept();
-    inputStream = socket.getInputStream();
-    String message = new String(inputStream.readAllBytes(), StandardCharsets.UTF_8);
-    System.out.println(message);
-    socket.close();
-    serverSocket.close();
-    inputStream.close();
+    bufferedInputStream = new BufferedInputStream(socket.getInputStream());
+    bufferedOutputStream = new BufferedOutputStream(socket.getOutputStream());
+    String clientMessage = "initial";
+    while (!"end conversation".equalsIgnoreCase(clientMessage)) {
+      if (bufferedInputStream.available() > 0) {
+        clientMessage = new String(bufferedInputStream.readAllBytes(), StandardCharsets.UTF_8);
+        System.out.println(clientMessage);
+        String serverMessage = "hello";
+        bufferedOutputStream.write(serverMessage.getBytes());
+        bufferedOutputStream.flush();
+      }
+    }
+  }
+
+  public void closeResources() throws IOException {
+    System.out.println("Closing server resources");
+    if (socket != null) {
+      System.out.println("Closing socket");
+      socket.close();
+    }
+    if (serverSocket != null) {
+      System.out.println("Closing server socket");
+      serverSocket.close();
+    }
+    if (bufferedInputStream != null) {
+      System.out.println("Closing bufferedInputStream");
+      bufferedInputStream.close();
+    }
+    if (bufferedOutputStream != null) {
+      System.out.println("Closing bufferedOutputStream");
+      bufferedOutputStream.close();
+    }
   }
 
 }

@@ -1,28 +1,60 @@
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.net.Socket;
+import java.util.Scanner;
 
 public class Client {
 
   private Socket socket;
-  private OutputStream outputStream;
+  private BufferedOutputStream bufferedOutputStream;
+  BufferedInputStream bufferedInputStream;
+  private final Scanner scanner;
+  private final String host;
+  private final int port;
 
-  public static void main(String[] args) throws IOException {
-    Client client = new Client();
-    client.initClient();
-    client.sendMessage();
+  public Client(String host, int port) throws IOException {
+    this.host = host;
+    this.port = port;
+    initClient();
+    scanner = new Scanner(System.in);
+    System.out.println("Client initialized.");
   }
 
-  public void initClient() throws IOException {
-    socket = new Socket("127.0.0.1", 12345);
+  private void initClient() throws IOException {
+    socket = new Socket(host, port);
   }
 
-  public void sendMessage() throws IOException {
-    outputStream = socket.getOutputStream();
-    outputStream.write("client-server demo".getBytes());
-    outputStream.flush();
-    outputStream.close();
-    socket.close();
+  public void startConversation() throws IOException {
+    System.out.println("Enter a message to send:");
+    String message;
+    bufferedOutputStream = new BufferedOutputStream(socket.getOutputStream());
+    bufferedInputStream = new BufferedInputStream(socket.getInputStream());
+    do {
+      message = scanner.nextLine();
+      bufferedOutputStream.write(message.getBytes());
+      bufferedOutputStream.flush();
+    } while (!"end conversation".equalsIgnoreCase(message));
+  }
+
+  public void closeResources() throws IOException {
+    System.out.println("Closing client resources");
+    if (bufferedOutputStream != null) {
+      System.out.println("Closing bufferedOutputStream");
+      bufferedOutputStream.close();
+    }
+    if (socket != null) {
+      System.out.println("Closing socket");
+      socket.close();
+    }
+    if (bufferedInputStream != null) {
+      System.out.println("Closing bufferedInputStream");
+      bufferedInputStream.close();
+    }
+    if (scanner != null) {
+      System.out.println("Closing scanner");
+      scanner.close();
+    }
   }
 
 }
