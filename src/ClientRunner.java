@@ -4,7 +4,6 @@ public class ClientRunner {
 
   public static void main(String[] args) throws IOException {
 
-    //TODO Not sending messages properly - needs fix
     Client client = new Client("127.0.0.1", 12345);
 
     Thread shutdownThread = new Thread(() -> {
