@@ -29,13 +29,16 @@ public class Server {
     bufferedOutputStream = new BufferedOutputStream(socket.getOutputStream());
     String clientMessage = "initial";
     while (!"end conversation".equalsIgnoreCase(clientMessage)) {
-      if (bufferedInputStream.available() > 0) {
-        clientMessage = new String(bufferedInputStream.readAllBytes(), StandardCharsets.UTF_8);
-        System.out.println(clientMessage);
-        String serverMessage = "hello";
-        bufferedOutputStream.write(serverMessage.getBytes());
-        bufferedOutputStream.flush();
+      byte[] lengthBytes = bufferedInputStream.readNBytes(1);
+      int messageLength = 0;
+      for (byte b : lengthBytes) {
+        messageLength =+ b;
       }
+      clientMessage = new String(bufferedInputStream.readNBytes(messageLength), StandardCharsets.UTF_8);
+      System.out.println(clientMessage);
+//      String serverMessage = "hello";
+//      bufferedOutputStream.write(serverMessage.getBytes());
+//      bufferedOutputStream.flush();
     }
   }
 

@@ -2,6 +2,7 @@ import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.net.Socket;
+import java.nio.charset.StandardCharsets;
 import java.util.Scanner;
 
 public class Client {
@@ -32,7 +33,9 @@ public class Client {
     bufferedInputStream = new BufferedInputStream(socket.getInputStream());
     do {
       message = scanner.nextLine();
-      bufferedOutputStream.write(message.getBytes());
+      byte[] messageBytes = message.getBytes(StandardCharsets.UTF_8);
+      bufferedOutputStream.write(messageBytes.length);
+      bufferedOutputStream.write(messageBytes);
       bufferedOutputStream.flush();
     } while (!"end conversation".equalsIgnoreCase(message));
   }
