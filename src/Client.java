@@ -58,6 +58,7 @@ public class Client {
       System.out.println("Closing bufferedInputStream");
       bufferedInputStream.close();
     }
+    System.exit(123);
   }
 
 }
