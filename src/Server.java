@@ -29,6 +29,7 @@ public class Server {
     bufferedOutputStream = new BufferedOutputStream(socket.getOutputStream());
     String clientMessage = "initial";
     while (!"end conversation".equalsIgnoreCase(clientMessage)) {
+      //TODO Get messages higher than length of 1 byte(255 characters)
       byte[] lengthBytes = bufferedInputStream.readNBytes(1);
       int messageLength = 0;
       for (byte b : lengthBytes) {

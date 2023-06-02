@@ -26,6 +26,7 @@ public class Client {
     socket = new Socket(host, port);
   }
 
+  //TODO Get messages from server and print it on terminal
   public void startConversation() throws IOException {
     System.out.println("Enter a message to send:");
     String message;
