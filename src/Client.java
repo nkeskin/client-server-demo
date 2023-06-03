@@ -14,6 +14,8 @@ public class Client {
   private final String host;
   private final int port;
 
+  private static final int MES_LEN_IN_POWER_OF_TWO = 16;
+
   public Client(String host, int port) throws IOException {
     this.host = host;
     this.port = port;
@@ -26,7 +28,6 @@ public class Client {
     socket = new Socket(host, port);
   }
 
-  //TODO Get messages from server and print it on terminal
   public void startConversation() throws IOException {
     System.out.println("Enter a message to send:");
     String message;
@@ -35,9 +36,20 @@ public class Client {
     do {
       message = scanner.nextLine();
       byte[] messageBytes = message.getBytes(StandardCharsets.UTF_8);
-      bufferedOutputStream.write(messageBytes.length);
-      bufferedOutputStream.write(messageBytes);
-      bufferedOutputStream.flush();
+      int messageLength = messageBytes.length;
+      int modulo = 2;
+      for(int i = 0; i < MES_LEN_IN_POWER_OF_TWO; i++) {
+        if(messageLength % modulo == 1) {
+          bufferedOutputStream.write(1);
+        } else {
+          bufferedOutputStream.write(0);
+        }
+        messageLength = messageLength / 2;
+      }
+
+        bufferedOutputStream.write(messageBytes);
+        bufferedOutputStream.flush();
+
     } while (!"end conversation".equalsIgnoreCase(message));
   }
 

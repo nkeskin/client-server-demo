@@ -13,6 +13,8 @@ public class Server {
   private BufferedOutputStream bufferedOutputStream;
   private final int port;
 
+  private static final int MES_LEN_IN_POWER_OF_TWO = 16;
+
   public Server(int port) throws IOException {
     this.port = port;
     initServer();
@@ -29,17 +31,17 @@ public class Server {
     bufferedOutputStream = new BufferedOutputStream(socket.getOutputStream());
     String clientMessage = "initial";
     while (!"end conversation".equalsIgnoreCase(clientMessage)) {
-      //TODO Get messages higher than length of 1 byte(255 characters)
-      byte[] lengthBytes = bufferedInputStream.readNBytes(1);
-      int messageLength = 0;
-      for (byte b : lengthBytes) {
-        messageLength =+ b;
+      byte[] lengthBytes =  bufferedInputStream.readNBytes(MES_LEN_IN_POWER_OF_TWO);
+      int mesLength = 0;
+      int modulo = 1;
+      for(byte b : lengthBytes) {
+        if(b == 1) {
+          mesLength = mesLength + modulo;
+        }
+        modulo *= 2;
       }
-      clientMessage = new String(bufferedInputStream.readNBytes(messageLength), StandardCharsets.UTF_8);
+      clientMessage = new String(bufferedInputStream.readNBytes(mesLength), StandardCharsets.UTF_8);
       System.out.println(clientMessage);
-//      String serverMessage = "hello";
-//      bufferedOutputStream.write(serverMessage.getBytes());
-//      bufferedOutputStream.flush();
     }
   }
 
