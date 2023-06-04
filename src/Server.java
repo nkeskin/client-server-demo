@@ -13,37 +13,41 @@ public class Server {
   private BufferedOutputStream bufferedOutputStream;
   private final int port;
 
-  private static final int MES_LEN_IN_POWER_OF_TWO = 16;
+  private static final int MES_LEN_IN_POWER_OF_TWO = 16; //16 means 2^16 Byte
 
-  public Server(int port) throws IOException {
+  public Server(int port) {
     this.port = port;
-    initServer();
     System.out.println("Server initialized, listening for incoming messages.");
   }
 
-  private void initServer() throws IOException {
+  public void initServer() throws IOException {
     serverSocket = new ServerSocket(port);
-  }
-
-  public void listenConversation() throws IOException {
     socket = serverSocket.accept();
     bufferedInputStream = new BufferedInputStream(socket.getInputStream());
     bufferedOutputStream = new BufferedOutputStream(socket.getOutputStream());
+  }
+
+  public void listenConversation() throws IOException {
     String clientMessage = "initial";
     while (!"end conversation".equalsIgnoreCase(clientMessage)) {
       byte[] lengthBytes =  bufferedInputStream.readNBytes(MES_LEN_IN_POWER_OF_TWO);
-      int mesLength = 0;
-      int modulo = 1;
-      for(byte b : lengthBytes) {
-        if(b == 1) {
-          mesLength = mesLength + modulo;
-        }
-        modulo *= 2;
-      }
-      clientMessage = new String(bufferedInputStream.readNBytes(mesLength), StandardCharsets.UTF_8);
+      clientMessage = new String(bufferedInputStream.readNBytes(getMessageLength(lengthBytes)), StandardCharsets.UTF_8);
       System.out.println(clientMessage);
     }
   }
+
+  private int getMessageLength(byte[] lengthBytes) {
+    int mesLength = 0;
+    int modulo = 1;
+    for(byte b : lengthBytes) {
+      if(b == 1) {
+        mesLength = mesLength + modulo;
+      }
+      modulo *= 2;
+    }
+    return mesLength;
+  }
+
 
   public void closeResources() throws IOException {
     System.out.println("Closing server resources:");

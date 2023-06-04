@@ -14,7 +14,7 @@ public class Client {
   private final String host;
   private final int port;
 
-  private static final int MES_LEN_IN_POWER_OF_TWO = 16;
+  private static final int MES_LEN_IN_POWER_OF_TWO = 16; //16 means 2^16 Byte
 
   public Client(String host, int port) throws IOException {
     this.host = host;
@@ -26,31 +26,34 @@ public class Client {
 
   private void initClient() throws IOException {
     socket = new Socket(host, port);
+    bufferedOutputStream = new BufferedOutputStream(socket.getOutputStream());
+    bufferedInputStream = new BufferedInputStream(socket.getInputStream());
   }
 
   public void startConversation() throws IOException {
     System.out.println("Enter a message to send:");
     String message;
-    bufferedOutputStream = new BufferedOutputStream(socket.getOutputStream());
-    bufferedInputStream = new BufferedInputStream(socket.getInputStream());
     do {
       message = scanner.nextLine();
       byte[] messageBytes = message.getBytes(StandardCharsets.UTF_8);
-      int messageLength = messageBytes.length;
-      int modulo = 2;
-      for(int i = 0; i < MES_LEN_IN_POWER_OF_TWO; i++) {
-        if(messageLength % modulo == 1) {
-          bufferedOutputStream.write(1);
-        } else {
-          bufferedOutputStream.write(0);
-        }
-        messageLength = messageLength / 2;
-      }
-
-        bufferedOutputStream.write(messageBytes);
-        bufferedOutputStream.flush();
-
+      bufferedOutputStream.write(getLengthBytes(messageBytes.length));
+      bufferedOutputStream.write(messageBytes);
+      bufferedOutputStream.flush();
     } while (!"end conversation".equalsIgnoreCase(message));
+  }
+
+  private byte[] getLengthBytes(int messageLength) {
+    int modulo = 2;
+    byte[] lengthBytes = new byte[16];
+    for (int i = 0; i < MES_LEN_IN_POWER_OF_TWO; i++) {
+      if (messageLength % modulo == 1) {
+        lengthBytes[i] = 1;
+      } else {
+        lengthBytes[i] = 0;
+      }
+      messageLength = messageLength / 2;
+    }
+    return lengthBytes;
   }
 
   public void closeResources() throws IOException {
@@ -58,10 +61,6 @@ public class Client {
     if (socket != null) {
       System.out.println("Closing socket");
       socket.close();
-    }
-    if (scanner != null) {
-      System.out.println("Closing scanner");
-      scanner.close();
     }
     if (bufferedOutputStream != null) {
       System.out.println("Closing bufferedOutputStream");
@@ -71,7 +70,10 @@ public class Client {
       System.out.println("Closing bufferedInputStream");
       bufferedInputStream.close();
     }
-    System.exit(123);
+    if (scanner != null) {
+      System.out.println("Closing scanner");
+      scanner.close();
+    }
   }
 
 }
