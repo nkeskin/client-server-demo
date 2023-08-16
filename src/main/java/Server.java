@@ -1,3 +1,5 @@
+package main.java;
+
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.IOException;
@@ -17,7 +19,7 @@ public class Server {
 
   public Server(int port) {
     this.port = port;
-    System.out.println("Server initialized, listening for incoming messages.");
+    System.out.println("main.java.Server initialized, listening for incoming messages.");
   }
 
   public void initServer() throws IOException {

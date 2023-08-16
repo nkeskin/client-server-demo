@@ -1,3 +1,5 @@
+package main.java;
+
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.IOException;
@@ -21,7 +23,7 @@ public class Client {
     this.port = port;
     initClient();
     scanner = new Scanner(System.in);
-    System.out.println("Client initialized.");
+    System.out.println("main.java.Client initialized.");
   }
 
   private void initClient() throws IOException {
